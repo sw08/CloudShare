@@ -8,6 +8,8 @@ from os.path import isfile, isdir, abspath
 from tkinter import messagebox
 from tkinter.ttk import Combobox, Progressbar, Notebook
 from random import randint
+import binascii
+from threading import Thread
 
 firebase_data = {
     "type": "service_account",
@@ -47,6 +49,7 @@ tabs.add(infoframe, text='정보')
 titleFont = tkinter.font.Font(family="맑은 고딕", size=20, weight="bold")
 contentFont = tkinter.font.Font(family='맑은 고딕', size=12)
 
+
 def convertBase(number, base):
     T="0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"
     i,j=divmod(number,base)
@@ -69,6 +72,12 @@ def create_code():
     a_36 = (a_36).upper()
     return a_36
 
+def makeCode():
+    run_thread = Thread(target=create_code)
+    run_thread.setDaemon(True)
+    a = run_thread.start()
+    return a
+
 def collectUploadFile():
     route = filedialog.askopenfilename(initialdir="C:/", title='파일 선택')
     if route != '':
@@ -85,11 +94,13 @@ def uploadFile(route):
     if isfile(route):
         if CanusedCombo.get() not in ['1', '2', '3', '4', '5']:
             messagebox.showwarning("경고", '최대 파일 다운로드 횟수를 올바르게 입력해 주십시오')
-        code = create_code()
-        with open(route, 'rb+') as f:
+            return
+        code = makeCode()
+        with open(route, 'rb') as f:
             binary = f.read()
+        binary = binascii.hexlify(binary)
         route = route.replace('\\\\', '/').replace('\\', '/')
-        filename = route.split('/')
+        filename = route.split('/') 
         filename = filename[len(filename)-1]
         code = addzero(code)
         dir = db.reference()
@@ -121,9 +132,9 @@ def downloadFile():
     binary = data['fileHex']
     filename = data['filename']
     binary = eval(f"b'{binary[2:]}")
-    f = open(f'{DownloadrouteEntry.get()}/{filename}', 'wb')
-    f.write(binary)
-    f.close()
+    binary = binascii.unhexlify(binary)
+    with open(f'{DownloadrouteEntry.get()}/{filename}', 'wb') as f:
+        f.write(binary)
     if int(data['used']) == int(data['canused']):
         dir.delete()
         return
