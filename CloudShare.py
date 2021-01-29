@@ -47,8 +47,10 @@ tabs.add(downloadframe, text='다운로드')
 tabs.add(infoframe, text='정보')
 
 titleFont = tkinter.font.Font(family="맑은 고딕", size=20, weight="bold")
-contentFont = tkinter.font.Font(family='맑은 고딕', size=12)
+contentFont = tkinter.font.Font(family='맑은 고딕', size=12)\
 
+code = ''
+binary = ''
 
 def convertBase(number, base):
     T="0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"
@@ -56,12 +58,13 @@ def convertBase(number, base):
     if i==0: return T[j]
     else: return convertBase(i,base)+T[j]
 
-def addzero(code):
-    for i in range(6-len(code)):
-        code = '0' + code
-    return code
+def addzero(c):
+    for _ in range(6-len(c)):
+        c = '0' + c
+    return c
 
 def create_code():
+    global code
     a = randint(0, 2176782335)
     a_36 = convertBase(a, 36)
     dir = db.reference(addzero(str(a_36)))
@@ -70,13 +73,21 @@ def create_code():
         a_36 = convertBase(a, 36)
         dir = db.reference(addzero(str(a_36)))
     a_36 = (a_36).upper()
-    return a_36
+    code = a_36
 
-def makeCode():
-    run_thread = Thread(target=create_code)
-    run_thread.setDaemon(True)
-    a = run_thread.start()
-    return a
+def controlHex(route):
+    global binary
+    with open(route, 'rb') as f:
+        bin = f.read()
+    binary = binascii.hexlify(bin)
+
+def controlBinCode(route):
+    code_thread = Thread(target=create_code)
+    code_thread.setDaemon(True)
+    code_thread.start()
+    hex_thread = Thread(target=controlHex, args=(route,))
+    hex_thread.setDaemon(True)
+    hex_thread.start()
 
 def collectUploadFile():
     route = filedialog.askopenfilename(initialdir="C:/", title='파일 선택')
@@ -95,10 +106,10 @@ def uploadFile(route):
         if CanusedCombo.get() not in ['1', '2', '3', '4', '5']:
             messagebox.showwarning("경고", '최대 파일 다운로드 횟수를 올바르게 입력해 주십시오')
             return
-        code = makeCode()
-        with open(route, 'rb') as f:
-            binary = f.read()
-        binary = binascii.hexlify(binary)
+        global code
+        global binary
+        controlBinCode(route)
+        print(code, binary)
         route = route.replace('\\\\', '/').replace('\\', '/')
         filename = route.split('/') 
         filename = filename[len(filename)-1]
@@ -173,5 +184,5 @@ makerLabel.pack()
 versionLabel.pack()
 
 CanusedCombo.set("다운로드 가능 횟수")
-
+print(db.reference('/').delete())
 root.mainloop()
