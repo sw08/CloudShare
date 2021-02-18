@@ -11,29 +11,16 @@ from random import randint
 import binascii
 from threading import Thread
 
-firebase_data = {
-    "type": "service_account",
-    "project_id": "cloudshare-cefe6",
-    "private_key_id": "9356698ac27921295f97614bd4aa7084192ad2f5",
-    "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQDRkEiiLcnQjIHI\nbNjZW1phc+jzc8U6OGKIiAbNlyDymSv0JvJI6xjWma7m8Yecx/4L8ZqE80k131oI\nGpes45Dz1GG5GOyxqbNh0ihvXcNb5MedyvZHcJwaQI0JR3qDejUnsu5tjRK0qcfv\nf5KPM74Qg3NJCG37kdvs9KkiQaUuQvU3HMSYbgXOjyhcPEa7g+RGnC57jJXLoi9B\neAC4QPV1BAo8KMT6CNtR8AGPYEBsjIVmRLCRn98Mbpe4G5Tw2kW7L4ojtBepmqiS\n2/vR0zl1395lp6RfXioNgtqAkJPxiKyfYJSOOQZRGK+Hhvfthqywencr4/S/dj4Z\nYKWzNnl5AgMBAAECggEAAWyJD6Fqp99BolKCp/n8nbuKqxdeP6sSgWty1pE+6mK5\n+CQl+H5rAjKoUdD1JhRwifsOP8eoVL0+va9yZB+UpIWvyNmyXsPzkcUXqyeCoXUs\n1A/5Z28j3MSH+Yg2Tn5+CydsPN+xTIc95piqumm9L2H+u5eJew2hiSmEnOBLlopf\nbD90WuTCE5weLlr+WQZDVruDlMVELtsk5PJutYljviaanPQwNIjWjsgpjnY5h2d/\n5FJ0bVbl8RgSkkVTvfZi+I/KgyCpGEo4nH2ObHDRYXCo4w7Wf4LO7O0qwCYJuLbm\nR82PMLxEp4u41rHaYoAQu3NFzPxAqHyce8fg3chBDwKBgQDpeww6YDVMlFefOY7F\nuiWarxnrTnIFmxp3/rG4vLL7hPa3KHsYPq2r4lqPrARHuPhfctLi2VGij6A0KVj/\nV0r9Y8sJFcPEb9Cejgj+8ppxea/YCL1fP9Fp0KqWKXBCQDSDO0tgRDs1LmgtczQz\nfO+czSVqYViWjr4d4m9xa4G9QwKBgQDlxrEayD1kU701Zxdl+eIxtg/C69Ak7p++\nG11oiGSpA7ztG9c8N3ofesWQyAWdnW4JXLve7XNqPxPuc+DB9ayI4x5Gduj1hjjW\nNg/lHv+AXrp8Kh5ySP/drrG6MK3j4MpaROWSgLTRyotJUdQlT7HDrsFExWRnQCoL\nqOXo4TtEkwKBgQCAmS6eBJm2yUoNwEUcMTA/J8zN51I0Nj748sbuqrimgpDlRx2t\nt/AuaSlaUvO0kXP0FqmDGxG0yQkDUfbcBTefo1SUd3Fxg+jTPAZGbleUwuKQyheM\nG/l7H9ylgsN7KiQCWClnJ424+AuXZQnOhjTwF6pRErcZjhu3GB4ryXwXQwKBgQDJ\nampE99IY5+6rqTqxgWHuAZG/Y8aJGUOd+Y7f2u+h2Ez767O4bUj33z7fsvZ5O08B\nlfB5cdwB/lkSZTFX1Grxc2VOj12WG5om7Czyw0Fk3aTKwoD93U+smz3f4FwNrTaz\n+kDjMz9NxyZhlwFH05wX1FBGYGGqwGwa3GrswMKbUQKBgFVOUPWeef36P29RXqnv\nWWnbWtYjOnkUHmsJLMEMmKU9dsUrBcQfcqz1A76b8xKKmWMzus96dOLvhgnnbUJ0\nE+Ae6Xvqxi5cn1HAgDpwjj1qagjzzVaAIfDxvArIUqBJvXapfPoySP7PwKkPtYzl\nv6f0qAq/gzndB76+Oy5nKzPr\n-----END PRIVATE KEY-----\n",
-    "client_email": "firebase-adminsdk-wrx41@cloudshare-cefe6.iam.gserviceaccount.com",
-    "client_id": "109497707511971902408",
-    "auth_uri": "https://accounts.google.com/o/oauth2/auth",
-    "token_uri": "https://oauth2.googleapis.com/token",
-    "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
-    "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-wrx41%40cloudshare-cefe6.iam.gserviceaccount.com"
-}
-
-cred = credentials.Certificate(firebase_data)
+cred = credentials.Certificate('토큰 파일 경로')
 firebase_admin.initialize_app(cred,{
-    'databaseURL' : 'https://cloudshare-cefe6-default-rtdb.firebaseio.com/'
+    'databaseURL' : '저장소 URL'
 })
 
 root = tk.Tk()
 root.title('CloudShare')
 root.resizable(False, False)
 root.geometry('275x325+100+100')
-#root.iconbitmap(abspath('logo.ico'))
+root.iconbitmap(abspath('logo.ico'))
 
 tabs = Notebook(root)
 tabs.pack(fill='both', expand=True)
