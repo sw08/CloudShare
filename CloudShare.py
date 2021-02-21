@@ -50,32 +50,6 @@ def addzero(c):
         c = '0' + c
     return c
 
-def create_code():
-    global code
-    a = randint(0, 2176782335)
-    a_36 = convertBase(a, 36)
-    dir = db.reference(addzero(str(a_36)))
-    while dir.get() is not None:
-        a = randint(0, 2176782335)
-        a_36 = convertBase(a, 36)
-        dir = db.reference(addzero(str(a_36)))
-    a_36 = (a_36).upper()
-    code = a_36
-
-def controlHex(route):
-    global binary
-    with open(route, 'rb') as f:
-        bin = f.read()
-    binary = binascii.hexlify(bin)
-
-def controlBinCode(route):
-    code_thread = Thread(target=create_code)
-    code_thread.setDaemon(True)
-    code_thread.start()
-    hex_thread = Thread(target=controlHex, args=(route,))
-    hex_thread.setDaemon(True)
-    hex_thread.start()
-
 def collectUploadFile():
     route = filedialog.askopenfilename(initialdir="C:/", title='파일 선택')
     if route != '':
@@ -95,8 +69,18 @@ def uploadFile(route):
             return
         global code
         global binary
-        controlBinCode(route)
-        print(code, binary)
+        a = randint(0, 2176782335)
+        a_36 = convertBase(a, 36)
+        dir = db.reference(addzero(str(a_36)))
+        while dir.get() is not None:
+            a = randint(0, 2176782335)
+            a_36 = convertBase(a, 36)
+            dir = db.reference(addzero(str(a_36)))
+        a_36 = (a_36).upper()
+        code = a_36
+        with open(route, 'rb') as f:
+            bin = f.read()
+        binary = binascii.hexlify(bin)
         route = route.replace('\\\\', '/').replace('\\', '/')
         filename = route.split('/') 
         filename = filename[len(filename)-1]
@@ -116,6 +100,11 @@ def uploadFile(route):
             messagebox.showerror('오류', '파일을 업로드할 수 없습니다')
     else:
         messagebox.showwarning("경고", "파일이 존재하지 않습니다.")
+
+def threadingUpload(route):
+    run_thread = Thread(target=uploadFile, args=(route,))
+    run_thread.setDaemon(True)
+    run_thread.start()
 
 def downloadFile():
     code = (DownloadCodeEntry.get()).upper()
@@ -141,7 +130,7 @@ def downloadFile():
 
 UploadrouteEntry = tk.Entry(uploadframe, font=contentFont, bg="#ffffff", width=20)
 UploadrouteBtn = tk.Button(uploadframe, text='찾아보기', command=collectUploadFile, font=contentFont)
-UploadBtn = tk.Button(uploadframe, text='업로드', command=lambda: uploadFile(UploadrouteEntry.get()), font=contentFont)
+UploadBtn = tk.Button(uploadframe, text='업로드', command=lambda: threadingUpload(UploadrouteEntry.get()), font=contentFont)
 CanusedCombo = Combobox(uploadframe, values=['1', '2', '3', '4', '5'], font=contentFont, state='readonly')
 UploadcodeLabel = tk.Label(uploadframe, font=contentFont, text='')
 
